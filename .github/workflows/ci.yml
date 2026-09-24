@@ -1,4 +1,4 @@
-name: Check C Code Formatting
+name: Check C code
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   formatting-check:
-    name: Formatting Check
+    name: Format, build and test
     runs-on: ubuntu-24.04
 
     steps:
@@ -28,6 +28,9 @@ jobs:
       - name: Build
         run: |
           cmake --build build
+      - name: Test
+        run: |
+          ctest --test-dir build --output-on-failure
       - name: Lint
         run: |
           run-clang-tidy-18 -p=build

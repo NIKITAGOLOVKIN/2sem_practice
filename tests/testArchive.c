@@ -1,6 +1,13 @@
 #include "archive.h"
 #include <assert.h>
+
+#ifdef _WIN32
 #include <direct.h>
+#else
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,12 +15,20 @@
 
 static void makeDirectory(const char* path)
 {
+#ifdef _WIN32
     _mkdir(path);
+#else
+    mkdir(path, 0777);
+#endif
 }
 
 static void removeDirectory(const char* path)
 {
+#ifdef _WIN32
     _rmdir(path);
+#else
+    rmdir(path);
+#endif
 }
 
 static uint8_t patternByte(size_t index)
@@ -172,6 +187,18 @@ static void testArchiveCompressAndDecompress(void)
     printf("--- testArchiveCompressAndDecompress finished! ---\n");
 }
 
+static int runArchiver(const char* arguments)
+{
+    char command[512];
+
+#ifdef _WIN32
+    snprintf(command, sizeof(command), "build\\huff.exe %s", arguments);
+#else
+    snprintf(command, sizeof(command), "build/huff %s", arguments);
+#endif
+    return system(command);
+}
+
 // Тестируем работу командной строки
 static void testCommandLine(void)
 {
@@ -184,9 +211,9 @@ static void testCommandLine(void)
     char* listText;
     int commandResult;
 
-    commandResult = system("build\\huff.exe c archiveCommand.huf archiveSample/a.txt archiveSample/b.bin archiveSample/sub/c.txt");
+    commandResult = runArchiver("c archiveCommand.huf archiveSample/a.txt archiveSample/b.bin archiveSample/sub/c.txt");
     assert(commandResult == 0);
-    commandResult = system("build\\huff.exe l archiveCommand.huf > archiveCommandList.txt");
+    commandResult = runArchiver("l archiveCommand.huf > archiveCommandList.txt");
     assert(commandResult == 0);
     listText = readTextFile("archiveCommandList.txt");
     assert(strstr(listText, "archiveSample/a.txt") != NULL);
@@ -194,15 +221,15 @@ static void testCommandLine(void)
     assert(strstr(listText, "archiveSample/sub/c.txt") != NULL);
     free(listText);
 
-    commandResult = system("build\\huff.exe x archiveCommand.huf archiveCommandOutput");
+    commandResult = runArchiver("x archiveCommand.huf archiveCommandOutput");
     assert(commandResult == 0);
     assertSameFile(inputFiles[0], "archiveCommandOutput/archiveSample/a.txt");
     assertSameFile(inputFiles[1], "archiveCommandOutput/archiveSample/b.bin");
     assertSameFile(inputFiles[2], "archiveCommandOutput/archiveSample/sub/c.txt");
 
-    commandResult = system("build\\huff.exe c");
+    commandResult = runArchiver("c");
     assert(commandResult != 0);
-    commandResult = system("build\\huff.exe no-such-command");
+    commandResult = runArchiver("no-such-command");
     assert(commandResult != 0);
     printf("--- testCommandLine finished! ---\n");
 }

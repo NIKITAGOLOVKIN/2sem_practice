@@ -1,7 +1,13 @@
 #include "archive.h"
 #include "compress.h"
 #include "decompress.h"
+
+#ifdef _WIN32
 #include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
+
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -106,8 +112,13 @@ static int createDirectory(const char* path)
     if (path[0] == '\0' || strcmp(path, ".") == 0)
         return 0;
 
+#ifdef _WIN32
     if (_mkdir(path) == 0 || errno == EEXIST)
         return 0;
+#else
+    if (mkdir(path, 0777) == 0 || errno == EEXIST)
+        return 0;
+#endif
     return -1;
 }
 

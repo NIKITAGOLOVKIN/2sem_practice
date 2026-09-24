@@ -6,6 +6,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+enable_testing()
+
 add_executable(huff
     bitIO.c
     priorityQueue.c
@@ -59,6 +61,11 @@ else()
 endif()
 
 foreach(testTarget testBitIo testPriorityQueue testHuffman testCompress testArchive)
+    add_test(
+        NAME ${testTarget}
+        COMMAND ${testTarget}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/..
+    )
     target_include_directories(${testTarget} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     if(MSVC)
         target_compile_options(${testTarget} PRIVATE /W4)
