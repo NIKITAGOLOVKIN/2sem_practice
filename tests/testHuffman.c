@@ -5,9 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static const char binaryWriteMode[] = "wb";
-static const char binaryReadMode[] = "rb";
-
 static int codesSharePrefix(const Code* leftCode, const Code* rightCode)
 {
     const Code* shorter = leftCode;
@@ -236,7 +233,7 @@ static void testEncodeAndDecode(void)
     assert(huffBuildTree(frequencies, &root) == 0);
     huffBuildCodeTable(root, table);
 
-    file = fopen(path, binaryWriteMode);
+    file = fopen(path, "wb");
     assert(file != NULL);
     bitWriterInit(&writer, file);
     for (index = 0; index < 1024; ++index) {
@@ -250,7 +247,7 @@ static void testEncodeAndDecode(void)
     bitWriterFlush(&writer);
     fclose(file);
 
-    file = fopen(path, binaryReadMode);
+    file = fopen(path, "rb");
     assert(file != NULL);
     bitReaderInit(&reader, file);
     for (index = 0; index < 1024; ++index) {
