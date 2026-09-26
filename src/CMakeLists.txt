@@ -54,10 +54,20 @@ add_executable(testArchive
     bitIO.c
 )
 
+add_executable(runExperiments
+    ../experiments/runExperiments.c
+)
+
+if(UNIX)
+    target_link_libraries(runExperiments m)
+endif()
+
 if(MSVC)
     target_compile_options(huff PRIVATE /W4)
+    target_compile_options(runExperiments PRIVATE /W4)
 else()
     target_compile_options(huff PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(runExperiments PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 foreach(testTarget testBitIo testPriorityQueue testHuffman testCompress testArchive)
