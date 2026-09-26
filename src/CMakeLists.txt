@@ -59,6 +59,7 @@ add_executable(runExperiments
 )
 
 if(UNIX)
+    target_compile_definitions(runExperiments PRIVATE _POSIX_C_SOURCE=200809L)
     target_link_libraries(runExperiments m)
 endif()
 
