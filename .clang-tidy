@@ -166,10 +166,11 @@ CheckOptions:
   readability-identifier-naming.GlobalVariableCase: camelBack
   readability-identifier-naming.StaticVariableCase: camelBack
 
-  readability-identifier-naming.ConstantCase: UPPER_CASE
-  readability-identifier-naming.GlobalConstantCase: UPPER_CASE
-  readability-identifier-naming.StaticConstantCase: UPPER_CASE
+  readability-identifier-naming.ConstantCase: camelBack
+  readability-identifier-naming.LocalConstantCase: camelBack
+  readability-identifier-naming.GlobalConstantCase: aNy_CasE
+  readability-identifier-naming.StaticConstantCase: aNy_CasE
 
-  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
 
 WarningsAsErrors: "*"
